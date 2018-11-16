@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4E342E</color>
+    <color name="colorPrimaryDark">#3E2723</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorSkyBlue">#62D0D5</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorRedP">#ffafa9</color>
+    <color name="colorBlack">#000000</color>
+
+    <color name="colorShadow">#BDBDBD</color>
+
+    <color name="facebookColor">#3B5998</color>
+
+    <color name="colorText">#939393</color>
+    <color name="colorTabInActiveText">#99ffffff</color>
+
+    <color name="colorStatusBarTran">#3c000000</color>
+
+    <color name="colorStatusBarOverlay">#3c000000</color>
+    <color name="colorLightStatusBarOverlay">#e7e7e7</color>
+
+    <color name="colorRed">#f44336</color>
+    <color name="colorAmber">#FFC107</color>
+    <color name="colorLightGreen">#8bc34a</color>
+    <color name="colorLightBlue">#03a9f4</color>
+    <color name="colorLightPink">#E91E63</color>
+
+    <color name="colorDeepPurple">#673ab7</color>
+
+    <color name="colorRedDark">#d32f2f</color>
+    <color name="colorAmberDark">#FFA000</color>
+    <color name="colorLightGreenDark">#689f38</color>
+    <color name="colorLightBlueDark">#0288d1</color>
+    <color name="colorDeepPurpleDark">#512da8</color>
+
+    <color name="black_overlay">#66000000</color>
+
+    <color name="color_game_blue">#0066ff</color>
+    <color name="color_game_blue_dark">#0040a1</color>
+    <color name="color_game_red">#ff0000</color>
+    <color name="color_game_red_dark">#800303</color>
+    <color name="color_game_green">#6dd13c</color>
+    <color name="color_game_green_dark">#4b9129</color>
+
+    <color name="color_game_black">#455A64</color>
+    <color name="color_game_black_dark">#263238</color>
+
+</resources>
