@@ -9,6 +9,30 @@
 
     tools:context=".MainActivity">
 
+    <ProgressBar
+        android:layout_width="80dp"
+        android:layout_gravity="center"
+        android:layout_height="80dp"
+        android:layout_marginTop="56dp"
+
+        android:id="@+id/main_progress"
+        />
+
+    <TextView
+        android:id="@+id/main_null"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:fontFamily="@font/kanit_semibold"
+        android:text="ไม่พบข้อมูล"
+        android:textColor="@color/colorWhite"
+        android:textSize="26dp"
+        android:textStyle="bold" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:background="@android:color/transparent"
         android:id="@+id/main_recyclerview"
