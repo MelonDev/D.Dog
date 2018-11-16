@@ -19,7 +19,6 @@ import com.up.bc.myapplicationproject.CreateEvent;
 import com.up.bc.myapplicationproject.Data.PetData;
 import com.up.bc.myapplicationproject.Data.PetEvent;
 import com.up.bc.myapplicationproject.FunctionTool;
-import com.up.bc.myapplicationproject.MyWorker;
 import com.up.bc.myapplicationproject.PetActivity;
 import com.up.bc.myapplicationproject.R;
 
