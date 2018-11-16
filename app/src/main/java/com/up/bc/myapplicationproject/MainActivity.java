@@ -169,16 +169,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setEvent(Calendar targetCal) {
-        final int _id = (int) System.currentTimeMillis();
-        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-        intent.putExtra("TITLE", "หัวข้อ");
-        intent.putExtra("MESSAGE", "ทดสอบ");
-        intent.putExtra("CANCEL", false);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), _id, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pendingIntent);
-    }
 
 
 }
