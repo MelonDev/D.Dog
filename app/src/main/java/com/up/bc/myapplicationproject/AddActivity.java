@@ -40,6 +40,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AddActivity extends AppCompatActivity {
@@ -87,7 +88,9 @@ public class AddActivity extends AppCompatActivity {
         if (extras != null) {
             id = extras.getInt("ID");
 
-            TextView title = (TextView)findViewById(R.id.add_title);
+            sizeSpin.setOnItemSelectedListener((MaterialSpinner.OnItemSelectedListener<String>) (view, position, id, item) -> setBreed(item, 0));
+
+            TextView title = (TextView) findViewById(R.id.add_title);
 
             if (id == 0) {
 
@@ -146,10 +149,16 @@ public class AddActivity extends AppCompatActivity {
                             }
                             sizeSpin.setSelectedIndex(petData.getSize());
 
-                            Integer s = functionTool.checkBreed(petData.getBreed());
-                            if (s >= 0) {
-                                breedSpin.setSelectedIndex(s);
+                            if (functionTool.loadBreed(functionTool.getNameOfSize(petData.getSize())) != null) {
+                                Integer s = functionTool.checkBreed(petData.getBreed(), functionTool.getNameOfSize(petData.getSize()));
+                                if (s >= 0) {
+                                    setBreed(functionTool.getNameOfSize(petData.getSize()), s);
+                                    //breedSpin.setSelectedIndex(s);
+                                }
+                            } else {
+                                breedSpin.setItems(new ArrayList<String>());
                             }
+
 
                             datePickerDialog = new DatePickerDialog(
                                     AddActivity.this, new DatePickerDialog.OnDateSetListener() {
@@ -166,8 +175,8 @@ public class AddActivity extends AppCompatActivity {
 
                                 try {
                                     Glide.with(AddActivity.this).load(petData.getImage()).into(imageView);
-                                }catch (Exception e){
-                                    Log.e("","");
+                                } catch (Exception e) {
+                                    Log.e("", "");
                                 }
 
                             }
@@ -208,6 +217,18 @@ public class AddActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void setBreed(String name, Integer position) {
+        ArrayList<String> list = new FunctionTool().loadBreed(name);
+        if (list != null) {
+            breedSpin.setItems(list);
+            breedSpin.setSelectedIndex(position);
+
+        } else {
+            breedSpin.setItems(new ArrayList<String>());
+        }
 
     }
 
@@ -293,10 +314,15 @@ public class AddActivity extends AppCompatActivity {
                             PetData petData = new PetData();
                             petData.setId(keys);
                             petData.setYear(year);
-                            petData.setMonth(month+1);
+                            petData.setMonth(month + 1);
                             petData.setDay(day);
-                            petData.setBreed(new FunctionTool().checkBreedPosition(breedSpin.getSelectedIndex()));
-                            petData.setGender(new FunctionTool().checkGender(genderSpin.getSelectedIndex()));
+                            FunctionTool functionTool = new FunctionTool();
+                            if (functionTool.loadBreed(functionTool.getNameOfSize(sizeSpin.getSelectedIndex())) != null) {
+                                petData.setBreed(functionTool.checkBreedPosition(functionTool.getNameOfSize(sizeSpin.getSelectedIndex()),breedSpin.getSelectedIndex()));
+                            }else {
+                                petData.setBreed("");
+                            }
+                            petData.setGender(functionTool.checkGender(genderSpin.getSelectedIndex()));
                             petData.setSize(sizeSpin.getSelectedIndex());
                             petData.setName(name);
                             petData.setWidth(width);
@@ -329,7 +355,7 @@ public class AddActivity extends AppCompatActivity {
 
                 }
             });
-        }else {
+        } else {
             EditText nameEdit = (EditText) findViewById(R.id.add_name_edit);
             EditText widthEdit = (EditText) findViewById(R.id.add_width_edit);
 
@@ -342,9 +368,14 @@ public class AddActivity extends AppCompatActivity {
             petData = petDatas;
             petData.setId(keys);
             petData.setYear(year);
-            petData.setMonth(month+1);
+            petData.setMonth(month + 1);
             petData.setDay(day);
-            petData.setBreed(new FunctionTool().checkBreedPosition(breedSpin.getSelectedIndex()));
+            FunctionTool functionTool = new FunctionTool();
+            if (functionTool.loadBreed(functionTool.getNameOfSize(sizeSpin.getSelectedIndex())) != null) {
+                petData.setBreed(functionTool.checkBreedPosition(functionTool.getNameOfSize(sizeSpin.getSelectedIndex()),breedSpin.getSelectedIndex()));
+            }else {
+                petData.setBreed("");
+            }
             petData.setGender(new FunctionTool().checkGender(genderSpin.getSelectedIndex()));
             petData.setSize(sizeSpin.getSelectedIndex());
             petData.setName(name);

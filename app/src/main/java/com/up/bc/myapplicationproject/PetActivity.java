@@ -102,7 +102,9 @@ public class PetActivity extends AppCompatActivity {
                         des.setText("ขนาด: " + new FunctionTool().getNameOfSize(petData.getSize()));
 
                         if (petData.getImage().length() > 0) {
-                            Glide.with(PetActivity.this).load(petData.getImage()).into(image);
+                            final ImageView images = (ImageView) findViewById(R.id.pet_image);
+
+                            Glide.with(PetActivity.this).load(petData.getImage()).into(images);
                             image.setVisibility(View.VISIBLE);
                         } else {
                             image.setVisibility(View.GONE);

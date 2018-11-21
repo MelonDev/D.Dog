@@ -1,11 +1,14 @@
 package com.up.bc.myapplicationproject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FunctionTool {
 
     ArrayList<String> gender, size, breed;
+
+    HashMap<String,ArrayList<String>> map;
 
     public FunctionTool() {
 
@@ -33,7 +36,23 @@ public class FunctionTool {
         breed.add("โกลเด้น รีทรีฟเวอร์");
         breed.add("ลาบราดอร์รีทรีฟเวอร์");
 
+        this.map = new HashMap<>();
+        addMap("ตุ๊กตา","ชิวาว่า");
 
+
+
+    }
+
+    private void addMap(String key ,String value){
+        ArrayList<String> arr = this.map.get(key);
+        if(arr != null){
+            arr.add(value);
+            this.map.put(key,arr);
+        }else {
+            ArrayList<String> arrs = new ArrayList<>();
+            arrs.add(value);
+            this.map.put(key,arrs);
+        }
     }
 
     public String getNameOfSize(Integer size) {
@@ -57,8 +76,20 @@ public class FunctionTool {
         return breed.get(position);
     }
 
+    public String checkBreedPosition(String size ,Integer position){
+        return loadBreed(size).get(position);
+    }
+
     public Integer checkBreed(String name){
         return breed.indexOf(name);
+    }
+
+    public Integer checkBreed(String name,String size){
+        return loadBreed(size).indexOf(name);
+    }
+
+    public ArrayList<String> loadBreed(String name){
+        return map.get(name);
     }
 
     public String checkGender(Integer position){
