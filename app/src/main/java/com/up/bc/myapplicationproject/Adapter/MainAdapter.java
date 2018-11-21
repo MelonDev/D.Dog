@@ -149,8 +149,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                 Calendar today = Calendar.getInstance();
 
                 cal.setTime(date);
-                cal.set(Calendar.HOUR, 5);
-                cal.set(Calendar.MINUTE, 23);
+                cal.set(Calendar.HOUR, 8);
+                cal.set(Calendar.MINUTE, 0);
                 cal.set(Calendar.SECOND, 0);
 
 
