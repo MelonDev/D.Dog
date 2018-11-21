@@ -37,12 +37,12 @@ public class SIgnUpActivity extends AppCompatActivity {
             }
         });
 
-        EditText e1 = (EditText)findViewById(R.id.signup_e1_btn);
-        EditText e2 = (EditText)findViewById(R.id.signup_e2_btn);
-        EditText e3 = (EditText)findViewById(R.id.signup_e3_btn);
-        EditText e4 = (EditText)findViewById(R.id.signup_e4_btn);
-        EditText e5 = (EditText)findViewById(R.id.signup_e5_btn);
-        EditText e6 = (EditText)findViewById(R.id.signup_e6_btn);
+        EditText e1 = (EditText) findViewById(R.id.signup_e1_btn);
+        EditText e2 = (EditText) findViewById(R.id.signup_e2_btn);
+        EditText e3 = (EditText) findViewById(R.id.signup_e3_btn);
+        EditText e4 = (EditText) findViewById(R.id.signup_e4_btn);
+        EditText e5 = (EditText) findViewById(R.id.signup_e5_btn);
+        EditText e6 = (EditText) findViewById(R.id.signup_e6_btn);
 
 
         CardView save = (CardView) findViewById(R.id.signup_save_btn);
@@ -57,46 +57,50 @@ public class SIgnUpActivity extends AppCompatActivity {
             String a6 = e6.getText().toString();
 
 
-            if(a1.length() > 0 && a2.length() > 0 && a3.length() > 0 && a4.length() > 0 && a5.length() > 0){
-                if(a4.contentEquals(a5)){
+            if (a1.length() > 0 && a2.length() > 0 && a3.length() > 0 && a4.length() > 0 && a5.length() > 0) {
+                if (a4.contentEquals(a5)) {
 
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(a3,a4).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
+                    if (a3.indexOf("@gmail.com") > -1 || a3.indexOf("@hotmail.com") > -1 || a3.indexOf("@hotmail.co.th") > -1) {
 
-                                UserData userData = new UserData();
-                                userData.setName(a1);
-                                userData.setUsername(a2);
-                                userData.setEmail(a3);
-                                userData.setId(FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
-                                userData.setPhone(a6);
+                        FirebaseAuth.getInstance().createUserWithEmailAndPassword(a3, a4).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
 
-                                FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid().toString()).child("Info").setValue(userData).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Intent intent = new Intent(SIgnUpActivity.this,MainActivity.class);
-                                        startActivity(intent);
-                                    }
-                                });
+                                    UserData userData = new UserData();
+                                    userData.setName(a1);
+                                    userData.setUsername(a2);
+                                    userData.setEmail(a3);
+                                    userData.setId(FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
+                                    userData.setPhone(a6);
 
-                                //Toast.makeText(this, "Authentication Successful.", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(SIgnUpActivity.this,"อีเมลนี้ได้ลงทะเบียนแล้ว",Toast.LENGTH_SHORT).show();
+                                    FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid().toString()).child("Info").setValue(userData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Intent intent = new Intent(SIgnUpActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    });
+
+                                    //Toast.makeText(this, "Authentication Successful.", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(SIgnUpActivity.this, "อีเมลนี้ได้ลงทะเบียนแล้ว", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        Toast.makeText(SIgnUpActivity.this,"กรุณาใส่เฉพาะ Gmail และ Hotmail",Toast.LENGTH_SHORT).show();
 
-                }else {
-                    Toast.makeText(SIgnUpActivity.this,"รหัสผ่านไม่ตรง",Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(SIgnUpActivity.this, "รหัสผ่านไม่ตรง", Toast.LENGTH_SHORT).show();
                 }
-            }else {
-                Toast.makeText(SIgnUpActivity.this,"ข้อมูลไม่ครบ",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(SIgnUpActivity.this, "ข้อมูลไม่ครบ", Toast.LENGTH_SHORT).show();
             }
 
         });
-
-
 
 
     }
