@@ -27,11 +27,13 @@ public class AlarmReceiver extends BroadcastReceiver {
                 String title = extras.getString("TITLE");
                 String message = extras.getString("MESSAGE");
                 String key = extras.getString("PETID");
+                Integer id = extras.getInt("ID");
+
 
                 Intent i = new Intent(context,PetActivity.class);
                 i.putExtra("KEY",key);
 
-                showNotification(context, title, message, i);
+                showNotification(context, title, message, i,id);
             }else {
                 Log.e("CA","SUC");
             }
@@ -39,10 +41,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    public void showNotification(Context context, String title, String body, Intent intent) {
+    public void showNotification(Context context, String title, String body, Intent intent,Integer id) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        int notificationId = 1;
+        int notificationId = id;
         String channelId = "channel-01";
         String channelName = "D.Dog";
         int importance = NotificationManager.IMPORTANCE_HIGH;

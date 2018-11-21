@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -96,7 +97,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             }
         });
 
-        calEvent(petData);
+        calEvent(position,petData);
 
 
     }
@@ -126,14 +127,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         }
     }
 
-    private void calEvent(PetData petData) {
+    private void calEvent(Integer position,PetData petData) {
 
         ArrayList<PetEvent> arr = new CreateEvent().load(petData.getBreed());
         CalendarAlgorithmLibrary calendarAlgorithmLibrary = new CalendarAlgorithmLibrary();
         Map<String, ArrayList<PetEvent>> map = calendarAlgorithmLibrary.load(arr, petData.getYear(), petData.getMonth() - 1, petData.getDay());
         ArrayList<String> arrDate = calendarAlgorithmLibrary.getStringFromMap(map);
 
-
+        Integer id = new Random().nextInt(1000000);
 
         for (int i = 0; i < arrDate.size(); i++) {
 
@@ -148,8 +149,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                 Calendar today = Calendar.getInstance();
 
                 cal.setTime(date);
-                cal.set(Calendar.HOUR, 8);
-                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.HOUR, 5);
+                cal.set(Calendar.MINUTE, 23);
                 cal.set(Calendar.SECOND, 0);
 
 
@@ -159,17 +160,17 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                         if (cal.get(Calendar.MONTH) >= today.get(Calendar.MONTH)) {
                             if (cal.get(Calendar.MONTH) == today.get(Calendar.MONTH)) {
                                 if (cal.get(Calendar.DAY_OF_MONTH) >= today.get(Calendar.DAY_OF_MONTH)) {
-                                    setEvent(cal, petData.getId(),petData.getName(),count);
+                                    setEvent(cal, petData.getId(),petData.getName(),count,id);
                                 }
                             } else {
-                                setEvent(cal, petData.getId(),petData.getName(),count);
+                                setEvent(cal, petData.getId(),petData.getName(),count,id);
 
                             }
 
                         }
                     } else {
                         if (cal.get(Calendar.YEAR) - today.get(Calendar.YEAR) <= 1) {
-                            setEvent(cal, petData.getId(),petData.getName(),count);
+                            setEvent(cal, petData.getId(),petData.getName(),count,id);
                         }
 
                     }
@@ -192,14 +193,17 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     }
 
-    private void setEvent(Calendar targetCal, String petID,  String petName,Integer count) {
-        final int _id = (int) System.currentTimeMillis();
+    private void setEvent(Calendar targetCal, String petID,  String petName,Integer count,Integer id) {
+        final Integer _id = (int) System.currentTimeMillis();
         Long s = targetCal.getTimeInMillis();
         Integer a = targetCal.get(Calendar.DAY_OF_MONTH);
         Integer b = targetCal.get(Calendar.MONTH) + 1;
         Integer c = targetCal.get(Calendar.YEAR);
 
         //Integer count = event.size();
+       // Log.e("ID",_id.toString());
+        //Log.e("R",id.toString());
+
 
         //Log.e(petID + "/" + s, a + "/" + b + "/" + c);
         if (s >= 0) {
@@ -207,8 +211,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             intent.putExtra("TITLE",  petName + " มีรายการที่ต้องทำ "+count+" วันนี้");
             intent.putExtra("MESSAGE", "แตะเพื่อดูรายละเอียด");
             intent.putExtra("PETID", petID);
+            intent.putExtra("ID",_id);
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(act.getBaseContext(), _id, intent, 0);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(act.getBaseContext(),_id , intent, 0);
+            //PendingIntent pendingIntent = PendingIntent.getActivity(act.getBaseContext(),_id , intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
             AlarmManager alarmManager = (AlarmManager) act.getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pendingIntent);
         } else {
