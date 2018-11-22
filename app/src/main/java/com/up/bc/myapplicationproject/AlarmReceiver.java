@@ -1,11 +1,13 @@
 package com.up.bc.myapplicationproject;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -59,11 +61,16 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.logo))
                 .setContentTitle(title)
                 .setAutoCancel(false)
                 .setColor(color)
+                .setShowWhen(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(importance)
                 .setVibrate(new long[]{500, 1000, 500})
                 .setContentText(body);
+
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntent(intent);

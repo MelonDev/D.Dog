@@ -208,7 +208,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         //Log.e(petID + "/" + s, a + "/" + b + "/" + c);
         if (s >= 0) {
             Intent intent = new Intent(act.getBaseContext(), AlarmReceiver.class);
-            intent.putExtra("TITLE",  petName + " มีรายการที่ต้องทำ "+count+" วันนี้");
+            intent.putExtra("TITLE",  petName + " มีรายการที่ต้องทำ "+count+" รายการในวันนี้");
             intent.putExtra("MESSAGE", "แตะเพื่อดูรายละเอียด");
             intent.putExtra("PETID", petID);
             intent.putExtra("ID",_id);
