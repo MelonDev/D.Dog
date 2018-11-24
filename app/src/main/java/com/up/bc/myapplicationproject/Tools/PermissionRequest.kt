@@ -248,6 +248,15 @@ class PermissionRequest() {
         }
     }
 
+    fun convertStringToDouble(str :String) :Double{
+        return try {
+            val i = str.toDouble()
+            i
+        }catch (e :Exception){
+            -1.0
+        }
+    }
+
     fun getByte() : ByteArray{
         val bmp = MediaStore.Images.Media.getBitmap(activity.contentResolver, filepath)
 

@@ -2,7 +2,8 @@ package com.up.bc.myapplicationproject.Data;
 
 public class PetData {
     String name,gender,id,image,breed;
-    Integer size,width,day,month,year;
+    Integer size,day,month,year;
+    Double width;
 
     public String getBreed() {
         return breed;
@@ -76,11 +77,11 @@ public class PetData {
         this.size = size;
     }
 
-    public Integer getWidth() {
+    public Double getWidth() {
         return width;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(Double width) {
         this.width = width;
     }
 }

@@ -252,7 +252,7 @@ public class AddActivity extends AppCompatActivity {
         String name = nameEdit.getText().toString();
         String widthStr = widthEdit.getText().toString();
 
-        Integer width = permissionRequest.convertStringToInteger(widthStr);
+        Double width = permissionRequest.convertStringToDouble(widthStr);
         if (width >= 0) {
             if (name.length() > 0) {
 
@@ -309,7 +309,7 @@ public class AddActivity extends AppCompatActivity {
                             String name = nameEdit.getText().toString();
                             String widthStr = widthEdit.getText().toString();
 
-                            Integer width = permissionRequest.convertStringToInteger(widthStr);
+                            Double width = permissionRequest.convertStringToDouble(widthStr);
 
                             PetData petData = new PetData();
                             petData.setId(keys);
@@ -362,7 +362,7 @@ public class AddActivity extends AppCompatActivity {
             String name = nameEdit.getText().toString();
             String widthStr = widthEdit.getText().toString();
 
-            Integer width = permissionRequest.convertStringToInteger(widthStr);
+            Double width = permissionRequest.convertStringToDouble(widthStr);
 
             PetData petData = new PetData();
             petData = petDatas;
