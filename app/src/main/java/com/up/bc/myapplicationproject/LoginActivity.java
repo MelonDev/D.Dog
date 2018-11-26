@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.up.bc.myapplicationproject.Data.UserData;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -65,6 +66,49 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this,SIgnUpActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        TextView login_reset_btn = (TextView)findViewById(R.id.login_reset_btn);
+        login_reset_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                EditText userEdit = (EditText) findViewById(R.id.login_email_edittext);
+                String username = userEdit.getText().toString();
+
+                if(username.length() > 0){
+                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                    firebaseAuth.sendPasswordResetEmail(username).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(LoginActivity.this, "ส่งอีเมลเรียบร้อย กรุณาเช็คอีเมลแล้วทำตามขั้นตอนต่อไป", Toast.LENGTH_LONG).show();
+                            }else {
+                                String error = task.getException().getLocalizedMessage().toString();
+
+
+                                if (error.indexOf("invalid") > -1) {
+                                    Toast.makeText(LoginActivity.this, "รหัสผ่านไม่ถูกต้อง", Toast.LENGTH_SHORT).show();
+
+                                } else if (error.indexOf("badly formatted") > -1) {
+                                    Toast.makeText(LoginActivity.this, "รูปแบบอีเมลไม่ถูกต้อง", Toast.LENGTH_SHORT).show();
+
+                                } else if (error.indexOf("no user") > -1) {
+                                    Toast.makeText(LoginActivity.this, "ลีเมลนี้ยังไม่มีการลงทะเบียน", Toast.LENGTH_SHORT).show();
+
+                                } else if (error.indexOf("network error") > -1) {
+                                    Toast.makeText(LoginActivity.this, "กรุณาเช็คการเชื่อมต่่ออินเทอร์เน็ต", Toast.LENGTH_SHORT).show();
+
+                                }
+                            }
+                        }
+                    });
+                }else {
+                    Toast.makeText(LoginActivity.this,"กรุณากรอกอีเมลในช่องอีเมล เพื่อรีเซ็ตรหัสผ่าน",Toast.LENGTH_SHORT).show();
+                }
+
+
             }
         });
 

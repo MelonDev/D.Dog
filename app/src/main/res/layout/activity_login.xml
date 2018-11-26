@@ -135,22 +135,49 @@
 
             </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/login_signup_btn"
-                android:paddingRight="20dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="0dp"
-                android:paddingBottom="10dp"
-                android:visibility="visible"
-                android:layout_gravity="center_horizontal"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/kanit_semibold"
-                android:text="สมัครสมาชิก"
-                android:textColor="@color/colorWhite"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:layout_gravity="center_horizontal"
+
+                android:layout_marginTop="15dp"
+
+                >
+
+                <TextView
+                    android:id="@+id/login_signup_btn"
+                    android:paddingRight="20dp"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="10dp"
+                    android:visibility="visible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/kanit_semibold"
+                    android:text="สมัครสมาชิก"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/login_reset_btn"
+                    android:paddingRight="20dp"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="10dp"
+                    android:visibility="visible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/kanit_semibold"
+                    android:text="ลืมรหัสผ่าน"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+
+
+            </LinearLayout>
+
 
 
 
