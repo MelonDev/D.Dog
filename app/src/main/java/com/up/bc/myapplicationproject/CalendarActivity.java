@@ -183,18 +183,22 @@ public class CalendarActivity extends AppCompatActivity {
                         bool_a = true;
                         card_a_layout.setVisibility(View.VISIBLE);
                         str_a = str_a + "- " + s.getName() + "\n";
+                        break;
                     case "กำจัดเห็บ/หมัด":
                         bool_b = true;
                         card_b_layout.setVisibility(View.VISIBLE);
                         str_b = str_b + "- " + s.getName() + "\n";
+                        break;
                     case "ฉีดวัคซีน":
                         bool_c = true;
                         card_c_layout.setVisibility(View.VISIBLE);
                         str_c = str_c + "- " + s.getName() + "\n";
+                        break;
                     case "อาบน้ำ":
                         bool_d = true;
                         card_d_layout.setVisibility(View.VISIBLE);
                         str_d = str_d + "- " + s.getName() + "\n";
+                        break;
                 }
             }
 
