@@ -99,7 +99,7 @@ public class PetActivity extends AppCompatActivity {
                             gender.setText("เพศ: เมีย");
                         }
 
-                        des.setText("ขนาด: " + new FunctionTool().getNameOfSize(petData.getSize()));
+                        des.setText("ขนาด: " + petData.getSize());
 
                         if (petData.getImage().length() > 0) {
                             final ImageView images = (ImageView) findViewById(R.id.pet_image);

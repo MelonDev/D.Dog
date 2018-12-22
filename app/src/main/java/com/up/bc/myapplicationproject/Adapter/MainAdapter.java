@@ -74,7 +74,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             holder.gender.setText("เพศ: เมีย");
         }
 
-        holder.des.setText("ขนาด: " + new FunctionTool().getNameOfSize(petData.getSize()));
+        holder.des.setText("ขนาด: " + petData.getSize());
 
         if (petData.getImage().length() > 0) {
             Glide.with(ct).load(petData.getImage()).into(holder.image);

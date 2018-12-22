@@ -17,8 +17,9 @@ import androidx.work.WorkerParameters;
 import static androidx.core.app.NotificationCompat.DEFAULT_SOUND;
 import static androidx.core.app.NotificationCompat.DEFAULT_VIBRATE;
 
-public class MyWorker extends Worker {
+public class MyWorker {
 
+    /*
     public MyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -70,4 +71,5 @@ public class MyWorker extends Worker {
 
         notificationManager.notify(notificationId, mBuilder.build());
     }
+    */
 }

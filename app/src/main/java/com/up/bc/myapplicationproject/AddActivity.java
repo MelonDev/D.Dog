@@ -22,8 +22,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.up.bc.myapplicationproject.Data.PetData;
+import com.up.bc.myapplicationproject.Data.PetInfo;
 import com.up.bc.myapplicationproject.Tools.PermissionRequest;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -42,11 +44,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class AddActivity extends AppCompatActivity {
 
     private PermissionRequest permissionRequest;
-    MaterialSpinner genderSpin, sizeSpin, breedSpin;
+    MaterialSpinner genderSpin, sizeSpin, breedSpin, knowAgeSpin;
+
+    LinearLayout ageLinear;
 
     Integer year, month, day;
 
@@ -54,9 +59,12 @@ public class AddActivity extends AppCompatActivity {
     Integer id;
     DatePickerDialog datePickerDialog;
 
-    PetData petDatas;
+    PetData petData;
 
     Boolean changeImage = false;
+    Boolean knowAge = true;
+    ArrayList<PetInfo> petInfos;
+    ArrayList<String> size, breed, conSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,177 +81,284 @@ public class AddActivity extends AppCompatActivity {
             }
         });
 
+        LinearLayout ageLinear = (LinearLayout) findViewById(R.id.ageLinear);
+
         genderSpin = (MaterialSpinner) findViewById(R.id.add_drop_gender);
         genderSpin.setItems(functionTool.getGenderList());
 
         sizeSpin = (MaterialSpinner) findViewById(R.id.add_drop_size);
-        sizeSpin.setItems(functionTool.getSizeList());
 
         breedSpin = (MaterialSpinner) findViewById(R.id.add_drop_breed);
-        breedSpin.setItems(functionTool.getBreedList());
+
+        knowAgeSpin = (MaterialSpinner) findViewById(R.id.add_know_age);
+        knowAgeSpin.setItems(functionTool.getBoolList());
 
         permissionRequest = new PermissionRequest().load(AddActivity.this);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            id = extras.getInt("ID");
+        FirebaseDatabase.getInstance().getReference().child("Data").child("Pets").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {
+                    petInfos = new ArrayList<>();
+                    size = new ArrayList<>();
+                    breed = new ArrayList<>();
+                    conSize = new ArrayList<>();
 
-            sizeSpin.setOnItemSelectedListener((MaterialSpinner.OnItemSelectedListener<String>) (view, position, id, item) -> setBreed(item, 0));
+                    Integer count2 = 0;
 
-            TextView title = (TextView) findViewById(R.id.add_title);
+                    for (DataSnapshot subDataSnapshot : dataSnapshot.getChildren()) {
+                        PetInfo petInfo = subDataSnapshot.getValue(PetInfo.class);
 
-            if (id == 0) {
+                        if (petInfos.size() == 0) {
+                            size.add(petInfo.getSize());
+                        }
 
-                title.setText("เพิ่มสัตว์เลี้ยง");
+                        petInfos.add(petInfo);
+                        breed.add(petInfo.getName());
 
-                final Calendar c = Calendar.getInstance();
-                year = c.get(Calendar.YEAR);
-                month = c.get(Calendar.MONTH);
-                day = c.get(Calendar.DAY_OF_MONTH);
+                        Integer i = 0;
+                        Boolean check = false;
+                        while (i < size.size()) {
 
-                setTextDate(year, month, day);
-
-                datePickerDialog = new DatePickerDialog(
-                        AddActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        setTextDate(year, month, dayOfMonth);
-
-
-                    }
-                }, year, month, day);
-
-            } else if (id == 1) {
-                title.setText("แก้ไขสัตว์เลี้ยง");
-
-                key = extras.getString("KEY");
-
-                Log.e("Key", "key: " + key);
-
-                permissionRequest.setWaitDialog("กำลังโหลด");
-                FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid().toString()).child("Pets").child(key).child("Info").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.getValue() != null) {
-                            permissionRequest.stopWaitDialog();
-                            PetData petData = dataSnapshot.getValue(PetData.class);
-
-                            petDatas = petData;
-
-                            year = petData.getYear();
-                            month = petData.getMonth() - 1;
-                            day = petData.getDay();
-
-                            setTextDate(year, month, day);
-
-                            EditText nameEdit = (EditText) findViewById(R.id.add_name_edit);
-                            EditText widthEdit = (EditText) findViewById(R.id.add_width_edit);
-
-                            nameEdit.setText(petData.getName().toString());
-                            widthEdit.setText(petData.getWidth().toString());
-
-                            if (petData.getGender().contentEquals("Male")) {
-                                genderSpin.setSelectedIndex(0);
-                            } else {
-                                genderSpin.setSelectedIndex(1);
-                            }
-                            sizeSpin.setSelectedIndex(petData.getSize());
-
-                            if (functionTool.loadBreed(functionTool.getNameOfSize(petData.getSize())) != null) {
-                                Integer s = functionTool.checkBreed(petData.getBreed(), functionTool.getNameOfSize(petData.getSize()));
-                                if (s >= 0) {
-                                    setBreed(functionTool.getNameOfSize(petData.getSize()), s);
-                                    //breedSpin.setSelectedIndex(s);
+                            if (size.size() > 0) {
+                                if (size.get(i).contentEquals(petInfo.getSize())) {
+                                    check = true;
                                 }
-                            } else {
-                                breedSpin.setItems(new ArrayList<String>());
+                            }
+                            i += 1;
+
+
+                            if (i == size.size() && !check) {
+                                size.add(petInfo.getSize());
+                                //Log.e("Test",petInfo.getSize());
+                            }
+
+                        }
+
+                        count2 += 1;
+
+                        if (count2 == dataSnapshot.getChildrenCount()) {
+
+                            sizeSpin.setItems(size);
+                            breedSpin.setItems(breed);
+
+                            Bundle extras = getIntent().getExtras();
+                            if (extras != null) {
+                                id = extras.getInt("ID");
+
+
+                                sizeSpin.setOnItemSelectedListener((MaterialSpinner.OnItemSelectedListener<String>) (view, position, id, item) -> {
+                                    loadAllBreedSize(item);
+                                    breedSpin.setItems(conSize);
+                                });
+
+                                knowAgeSpin.setOnItemSelectedListener((MaterialSpinner.OnItemSelectedListener<String>) (view, position, id, item) -> {
+                                    if (item.contentEquals("ทราบ")) {
+                                        ageLinear.setVisibility(View.VISIBLE);
+                                        knowAge = true;
+                                    } else {
+                                        ageLinear.setVisibility(View.GONE);
+                                        knowAge = false;
+                                    }
+                                });
+
+
+                                TextView title = (TextView) findViewById(R.id.add_title);
+
+                                if (id == 0) {
+                                    loadAllBreedSize(size.get(sizeSpin.getSelectedIndex()));
+                                    breedSpin.setItems(conSize);
+
+
+                                    final Calendar c = Calendar.getInstance();
+                                    year = c.get(Calendar.YEAR);
+                                    month = c.get(Calendar.MONTH);
+                                    day = c.get(Calendar.DAY_OF_MONTH);
+
+                                    setTextDate(year, month, day);
+
+                                    datePickerDialog = new DatePickerDialog(
+                                            AddActivity.this, new DatePickerDialog.OnDateSetListener() {
+                                        @Override
+                                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                            setTextDate(year, month, dayOfMonth);
+
+
+                                        }
+                                    }, year, month, day);
+
+                                } else if (id == 1) {
+
+                                    title.setText("แก้ไขสัตว์เลี้ยง");
+
+                                    key = extras.getString("KEY");
+
+                                    Log.e("Key", "key: " + key);
+
+                                    permissionRequest.setWaitDialog("กำลังโหลด");
+                                    FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid().toString()).child("Pets").child(key).child("Info").addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.getValue() != null) {
+                                                permissionRequest.stopWaitDialog();
+                                                PetData petDatas = dataSnapshot.getValue(PetData.class);
+
+                                                petData = petDatas;
+
+                                                if (petData.getKnowAge()) {
+                                                    ageLinear.setVisibility(View.VISIBLE);
+                                                    knowAge = true;
+                                                    knowAgeSpin.setSelectedIndex(0);
+                                                } else {
+                                                    ageLinear.setVisibility(View.GONE);
+                                                    knowAge = false;
+                                                    knowAgeSpin.setSelectedIndex(1);
+                                                }
+
+                                                year = petData.getYear();
+                                                month = petData.getMonth() - 1;
+                                                day = petData.getDay();
+
+                                                setTextDate(year, month, day);
+
+                                                EditText nameEdit = (EditText) findViewById(R.id.add_name_edit);
+                                                EditText widthEdit = (EditText) findViewById(R.id.add_width_edit);
+
+                                                nameEdit.setText(petData.getName().toString());
+                                                widthEdit.setText(petData.getWidth().toString());
+
+                                                if (petData.getGender().contentEquals("Male")) {
+                                                    genderSpin.setSelectedIndex(0);
+                                                } else {
+                                                    genderSpin.setSelectedIndex(1);
+                                                }
+
+                                                Integer is = 0;
+                                                while (is < size.size()){
+                                                    if(size.get(is).contentEquals(petData.getSize())){
+                                                        sizeSpin.setSelectedIndex(is);
+                                                        loadAllBreedSize(size.get(is));
+                                                        Integer count = 0;
+                                                        while (count < conSize.size()){
+                                                            if(conSize.get(count).contentEquals(petData.getBreed())){
+                                                                breedSpin.setSelectedIndex(count);
+                                                            }
+                                                            count+=1;
+                                                        }
+                                                    }
+                                                    is+=1;
+                                                }
+
+                                                /*
+                                                sizeSpin.setSelectedIndex(petData.getSize());
+
+                                                if (functionTool.loadBreed(functionTool.getNameOfSize(petData.getSize())) != null) {
+                                                    Integer s = functionTool.checkBreed(petData.getBreed(), functionTool.getNameOfSize(petData.getSize()));
+                                                    if (s >= 0) {
+                                                        setBreed(functionTool.getNameOfSize(petData.getSize()), s);
+                                                        //breedSpin.setSelectedIndex(s);
+                                                    }
+                                                } else {
+                                                    breedSpin.setItems(new ArrayList<String>());
+                                                }*/
+
+
+                                                datePickerDialog = new DatePickerDialog(
+                                                        AddActivity.this, new DatePickerDialog.OnDateSetListener() {
+                                                    @Override
+                                                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                                        setTextDate(year, month, dayOfMonth);
+
+
+                                                    }
+                                                }, year, month, day);
+
+                                                ImageView imageView = (ImageView) findViewById(R.id.add_image_image);
+                                                if (petData.getImage().length() > 0) {
+
+                                                    try {
+                                                        Glide.with(AddActivity.this).load(petData.getImage()).into(imageView);
+                                                    } catch (Exception e) {
+                                                        Log.e("", "");
+                                                    }
+
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                            Log.e("", "");
+                                        }
+                                    });
+
+                                }
+
+
                             }
 
 
-                            datePickerDialog = new DatePickerDialog(
-                                    AddActivity.this, new DatePickerDialog.OnDateSetListener() {
+
+                            CardView imageBtn = (CardView) findViewById(R.id.add_image_btn);
+                            imageBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
-                                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                    setTextDate(year, month, dayOfMonth);
-
-
+                                public void onClick(View v) {
+                                    permissionRequest.request();
                                 }
-                            }, year, month, day);
+                            });
 
-                            ImageView imageView = (ImageView) findViewById(R.id.add_image_image);
-                            if (petData.getImage().length() > 0) {
-
-                                try {
-                                    Glide.with(AddActivity.this).load(petData.getImage()).into(imageView);
-                                } catch (Exception e) {
-                                    Log.e("", "");
+                            RelativeLayout dateBtn = (RelativeLayout) findViewById(R.id.add_date_btn);
+                            dateBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    datePickerDialog.show();
                                 }
+                            });
 
-                            }
+                            CardView saveBtn = (CardView) findViewById(R.id.add_save_btn);
+                            saveBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    upload();
+                                }
+                            });
+
+
                         }
                     }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.e("", "");
-                    }
-                });
-
+                }
             }
-        }
 
-
-        CardView imageBtn = (CardView) findViewById(R.id.add_image_btn);
-        imageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                permissionRequest.request();
-            }
-        });
-
-        RelativeLayout dateBtn = (RelativeLayout) findViewById(R.id.add_date_btn);
-        dateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerDialog.show();
-            }
-        });
-
-        CardView saveBtn = (CardView) findViewById(R.id.add_save_btn);
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                upload();
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("", "");
             }
         });
 
 
     }
+
 
     private void setBreed(String name, Integer position) {
-        ArrayList<String> list = new FunctionTool().loadBreed(name);
-        if (list != null) {
-            breedSpin.setItems(list);
-            breedSpin.setSelectedIndex(position);
 
-        } else {
-            breedSpin.setItems(new ArrayList<String>());
+    }
+
+    private void loadAllBreedSize(String size) {
+        Integer i = 0;
+        if (size != null) {
+            conSize.clear();
+            for (PetInfo pet : petInfos) {
+                if (pet.getSize().contentEquals(size)) {
+                    conSize.add(pet.getName());
+                }
+                i += 1;
+            }
         }
-
     }
 
-    private void setTextDate(Integer year, Integer month, Integer day) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-
-        TextView dateText = (TextView) findViewById(R.id.add_date_text);
-
-        dateText.setText(day + "/" + (month + 1) + "/" + year);
-
-    }
 
     private void upload() {
+
         permissionRequest.setWaitDialog("กำลังอัปโหลด");
 
         EditText nameEdit = (EditText) findViewById(R.id.add_name_edit);
@@ -292,7 +407,10 @@ public class AddActivity extends AppCompatActivity {
         }
 
 
+
     }
+
+
 
     private void refer(final String keys, StorageReference refs) {
         final StorageReference ref = refs;
@@ -313,21 +431,37 @@ public class AddActivity extends AppCompatActivity {
 
                             PetData petData = new PetData();
                             petData.setId(keys);
-                            petData.setYear(year);
-                            petData.setMonth(month + 1);
-                            petData.setDay(day);
-                            FunctionTool functionTool = new FunctionTool();
-                            if (functionTool.loadBreed(functionTool.getNameOfSize(sizeSpin.getSelectedIndex())) != null) {
-                                petData.setBreed(functionTool.checkBreedPosition(functionTool.getNameOfSize(sizeSpin.getSelectedIndex()),breedSpin.getSelectedIndex()));
+
+                            petData.setKnowAge(knowAge);
+
+                            if(!knowAge){
+                                Calendar cs = Calendar.getInstance();
+
+                                cs.add(Calendar.YEAR,1);
+
+                                Integer yearsm = cs.get(Calendar.YEAR);
+                                Integer monthsm = cs.get(Calendar.MONTH);
+                                Integer daysm = cs.get(Calendar.DAY_OF_MONTH);
+
+                                petData.setYear(yearsm);
+                                petData.setMonth(monthsm + 1);
+                                petData.setDay(daysm);
+
                             }else {
-                                petData.setBreed("");
+                                petData.setYear(year);
+                                petData.setMonth(month + 1);
+                                petData.setDay(day);
                             }
+
+                            FunctionTool functionTool = new FunctionTool();
+
+                            petData.setBreed(conSize.get(breedSpin.getSelectedIndex()));
+
                             petData.setGender(functionTool.checkGender(genderSpin.getSelectedIndex()));
-                            petData.setSize(sizeSpin.getSelectedIndex());
+                            petData.setSize(size.get(sizeSpin.getSelectedIndex()));
                             petData.setName(name);
                             petData.setWidth(width);
                             petData.setImage(uri.toString());
-
 
                             FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid().toString()).child("Pets").child(keys).child("Info")
                                     .setValue(petData).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -364,20 +498,37 @@ public class AddActivity extends AppCompatActivity {
 
             Double width = permissionRequest.convertStringToDouble(widthStr);
 
-            PetData petData = new PetData();
-            petData = petDatas;
+            //PetData petData = new PetData();
             petData.setId(keys);
-            petData.setYear(year);
-            petData.setMonth(month + 1);
-            petData.setDay(day);
-            FunctionTool functionTool = new FunctionTool();
-            if (functionTool.loadBreed(functionTool.getNameOfSize(sizeSpin.getSelectedIndex())) != null) {
-                petData.setBreed(functionTool.checkBreedPosition(functionTool.getNameOfSize(sizeSpin.getSelectedIndex()),breedSpin.getSelectedIndex()));
+
+            petData.setKnowAge(knowAge);
+
+            if(!knowAge){
+                Calendar cs = Calendar.getInstance();
+
+                cs.add(Calendar.YEAR,1);
+
+                Integer yearsm = cs.get(Calendar.YEAR);
+                Integer monthsm = cs.get(Calendar.MONTH);
+                Integer daysm = cs.get(Calendar.DAY_OF_MONTH);
+
+                petData.setYear(yearsm);
+                petData.setMonth(monthsm + 1);
+                petData.setDay(daysm);
+
             }else {
-                petData.setBreed("");
+                petData.setYear(year);
+                petData.setMonth(month + 1);
+                petData.setDay(day);
             }
-            petData.setGender(new FunctionTool().checkGender(genderSpin.getSelectedIndex()));
-            petData.setSize(sizeSpin.getSelectedIndex());
+
+            FunctionTool functionTool = new FunctionTool();
+
+
+            petData.setBreed(conSize.get(breedSpin.getSelectedIndex()));
+
+            petData.setGender(functionTool.checkGender(genderSpin.getSelectedIndex()));
+            petData.setSize(size.get(sizeSpin.getSelectedIndex()));
             petData.setName(name);
             petData.setWidth(width);
 
@@ -386,7 +537,6 @@ public class AddActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Void aVoid) {
                     permissionRequest.stopWaitDialog();
-
                     Toast.makeText(AddActivity.this, "เรียบร้อย", Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -394,10 +544,22 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
+
+    private void setTextDate(Integer year, Integer month, Integer day) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+
+        TextView dateText = (TextView) findViewById(R.id.add_date_text);
+
+        dateText.setText(day + "/" + (month + 1) + "/" + year);
+
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
 
         permissionRequest.setFilepath(data.getData());
 

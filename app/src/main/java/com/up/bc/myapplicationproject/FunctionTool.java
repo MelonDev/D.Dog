@@ -1,5 +1,7 @@
 package com.up.bc.myapplicationproject;
 
+import com.up.bc.myapplicationproject.Data.PetInfo;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +55,7 @@ public class FunctionTool {
 
 
 
+
     }
 
     private void addMap(String key ,String value){
@@ -67,6 +70,7 @@ public class FunctionTool {
         }
     }
 
+    /*
     public String getNameOfSize(Integer size) {
         switch (size) {
             case 0:
@@ -87,6 +91,14 @@ public class FunctionTool {
     public String checkBreedPosition(Integer position){
         return breed.get(position);
     }
+    */
+
+    /*
+
+    public String checkBreedPosition(ArrayList<PetInfo> arrayList, Integer position){
+        return arrayList.get(position).getName();
+    }
+
 
     public String checkBreedPosition(String size ,Integer position){
         return loadBreed(size).get(position);
@@ -104,6 +116,8 @@ public class FunctionTool {
         return map.get(name);
     }
 
+    */
+
     public String checkGender(Integer position){
         if(position == 0){
             return "Male";
@@ -112,6 +126,7 @@ public class FunctionTool {
         }
     }
 
+    /*
 
     public List<String> getBreedList(){
         return this.breed;
@@ -120,9 +135,17 @@ public class FunctionTool {
     public List<String> getSizeList() {
         return this.size;
     }
+    */
 
     public List<String> getGenderList() {
         return gender;
+    }
+
+    public List<String> getBoolList(){
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("ทราบ");
+        strings.add("ไม่ทราบ");
+        return strings;
     }
 
 }
