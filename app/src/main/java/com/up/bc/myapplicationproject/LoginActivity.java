@@ -45,11 +45,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
-        }else {
+        } else {
             CardView loginBtn = (CardView) findViewById(R.id.login_btn);
             loginBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -60,16 +60,16 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
-        TextView signup = (TextView)findViewById(R.id.login_signup_btn);
+        TextView signup = (TextView) findViewById(R.id.login_signup_btn);
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this,SIgnUpActivity.class);
+                Intent intent = new Intent(LoginActivity.this, SIgnUpActivity.class);
                 startActivity(intent);
             }
         });
 
-        TextView login_reset_btn = (TextView)findViewById(R.id.login_reset_btn);
+        TextView login_reset_btn = (TextView) findViewById(R.id.login_reset_btn);
         login_reset_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,14 +77,14 @@ public class LoginActivity extends AppCompatActivity {
                 EditText userEdit = (EditText) findViewById(R.id.login_email_edittext);
                 String username = userEdit.getText().toString();
 
-                if(username.length() > 0){
+                if (username.length() > 0) {
                     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                     firebaseAuth.sendPasswordResetEmail(username).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 Toast.makeText(LoginActivity.this, "ส่งอีเมลเรียบร้อย กรุณาเช็คอีเมลแล้วทำตามขั้นตอนต่อไป", Toast.LENGTH_LONG).show();
-                            }else {
+                            } else {
                                 String error = task.getException().getLocalizedMessage().toString();
 
 
@@ -104,15 +104,13 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                     });
-                }else {
-                    Toast.makeText(LoginActivity.this,"กรุณากรอกอีเมลในช่องอีเมล เพื่อรีเซ็ตรหัสผ่าน",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "กรุณากรอกอีเมลในช่องอีเมล เพื่อรีเซ็ตรหัสผ่าน", Toast.LENGTH_SHORT).show();
                 }
 
 
             }
         });
-
-
 
 
     }
@@ -138,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setContentTitle(title)
                 .setAutoCancel(false)
                 .setColor(color)
-                .setVibrate(new long[] { 500, 1000, 500 })
+                .setVibrate(new long[]{500, 1000, 500})
                 .setContentText(body);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -168,11 +166,11 @@ public class LoginActivity extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(Task<AuthResult> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
-                            }else {
+                            } else {
                                 String error = task.getException().getLocalizedMessage().toString();
 
 

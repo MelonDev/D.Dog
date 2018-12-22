@@ -13,6 +13,10 @@ import android.widget.TextView;
 
 import com.applandeo.materialcalendarview.EventDay;
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.up.bc.myapplicationproject.AlarmReceiver;
 import com.up.bc.myapplicationproject.CalendarAlgorithmLibrary;
 import com.up.bc.myapplicationproject.CreateEvent;
@@ -97,7 +101,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             }
         });
 
-        calEvent(position,petData);
+        calEvent(position, petData);
 
 
     }
@@ -127,73 +131,172 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         }
     }
 
-    private void calEvent(Integer position,PetData petData) {
+    private void calEvent(Integer position, PetData petData) {
 
-        ArrayList<PetEvent> arr = new CreateEvent().load(petData.getBreed());
-        CalendarAlgorithmLibrary calendarAlgorithmLibrary = new CalendarAlgorithmLibrary();
-        Map<String, ArrayList<PetEvent>> map = calendarAlgorithmLibrary.load(arr, petData.getYear(), petData.getMonth() - 1, petData.getDay());
-        ArrayList<String> arrDate = calendarAlgorithmLibrary.getStringFromMap(map);
+        //ArrayList<PetEvent> arr = new CreateEvent().load(petData.getBreed());
 
-        Integer id = new Random().nextInt(1000000);
+        FirebaseDatabase.getInstance().getReference().child("Data").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null){
 
-        for (int i = 0; i < arrDate.size(); i++) {
+                    Integer count2 = 0;
 
-            Integer count = map.get(arrDate.get(i)).size();
+                    ArrayList<PetEvent> arr = new ArrayList<>();
+                    arr.clear();
 
+                    DataSnapshot eventData = dataSnapshot.child("Event");
 
-            String strDate = arrDate.get(i);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            try {
-                Date date = sdf.parse(strDate);
-                Calendar cal = Calendar.getInstance();
-                Calendar today = Calendar.getInstance();
+                    for (DataSnapshot subDataSnapshot : eventData.getChildren()) {
 
-                cal.setTime(date);
-                cal.set(Calendar.HOUR, 8);
-                cal.set(Calendar.MINUTE, 0);
-                cal.set(Calendar.SECOND, 0);
+                        count2 += 1;
+
+                        DataSnapshot infoShot = subDataSnapshot.child("Info");
+                        DataSnapshot dateShot = subDataSnapshot.child("Date");
+                        DataSnapshot loopShot = subDataSnapshot.child("Loop");
 
 
+                        PetEvent petEvent = new PetEvent();
+                        petEvent.createEvent(getDataToString(infoShot,"name"),getDataToString(infoShot,"title"),getDataToBoolean(infoShot,"loop"))
+                        .createDate(getDataToInteger(dateShot,"day"),getDataToInteger(dateShot,"month"),getDataToInteger(dateShot,"year"))
+                        .createLoop(getDataToInteger(loopShot,"day"),getDataToInteger(loopShot,"month"),getDataToInteger(loopShot,"year"));
 
-                if (cal.get(Calendar.YEAR) >= today.get(Calendar.YEAR)) {
-                    if (cal.get(Calendar.YEAR) == today.get(Calendar.YEAR)) {
-                        if (cal.get(Calendar.MONTH) >= today.get(Calendar.MONTH)) {
-                            if (cal.get(Calendar.MONTH) == today.get(Calendar.MONTH)) {
-                                if (cal.get(Calendar.DAY_OF_MONTH) >= today.get(Calendar.DAY_OF_MONTH)) {
-                                    setEvent(cal, petData.getId(),petData.getName(),count,id);
-                                }
+
+                        arr.add(petEvent);
+
+                        if(count2 == eventData.getChildrenCount()){
+
+                            DataSnapshot specialData = dataSnapshot.child("Special_Event");
+
+                            if (petData.getBreed().contentEquals("ลาบราดอร์รีทรีฟเวอร์")) {
+
+                                DataSnapshot s = specialData.child("ลาบราดอร์รีทรีฟเวอร์");
+
+                                DataSnapshot infoShot2 = s.child("Info");
+                                DataSnapshot dateShot2 = s.child("Date");
+                                DataSnapshot loopShot2 = s.child("Loop");
+
+
+                                PetEvent petEvent2 = new PetEvent();
+                                petEvent2.createEvent(getDataToString(infoShot2,"name"),getDataToString(infoShot2,"title"),getDataToBoolean(infoShot2,"loop"))
+                                        .createDate(getDataToInteger(dateShot2,"day"),getDataToInteger(dateShot2,"month"),getDataToInteger(dateShot2,"year"))
+                                        .createLoop(getDataToInteger(loopShot2,"day"),getDataToInteger(loopShot2,"month"),getDataToInteger(loopShot2,"year"));
+
+
+                                arr.add(petEvent2);
                             } else {
-                                setEvent(cal, petData.getId(),petData.getName(),count,id);
+
+                                DataSnapshot s = specialData.child("อื่น");
+
+                                DataSnapshot infoShot2 = s.child("Info");
+                                DataSnapshot dateShot2 = s.child("Date");
+                                DataSnapshot loopShot2 = s.child("Loop");
+
+
+                                PetEvent petEvent2 = new PetEvent();
+                                petEvent2.createEvent(getDataToString(infoShot2,"name"),getDataToString(infoShot2,"title"),getDataToBoolean(infoShot2,"loop"))
+                                        .createDate(getDataToInteger(dateShot2,"day"),getDataToInteger(dateShot2,"month"),getDataToInteger(dateShot2,"year"))
+                                        .createLoop(getDataToInteger(loopShot2,"day"),getDataToInteger(loopShot2,"month"),getDataToInteger(loopShot2,"year"));
+
+
+                                arr.add(petEvent2);
+                            }
+
+
+                            CalendarAlgorithmLibrary calendarAlgorithmLibrary = new CalendarAlgorithmLibrary();
+                            Map<String, ArrayList<PetEvent>> map = calendarAlgorithmLibrary.load(arr, petData.getYear(), petData.getMonth() - 1, petData.getDay());
+                            ArrayList<String> arrDate = calendarAlgorithmLibrary.getStringFromMap(map);
+
+                            Integer id = new Random().nextInt(1000000);
+
+                            for (int i = 0; i < arrDate.size(); i++) {
+
+                                Integer count = map.get(arrDate.get(i)).size();
+
+
+                                String strDate = arrDate.get(i);
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                try {
+                                    Date date = sdf.parse(strDate);
+                                    Calendar cal = Calendar.getInstance();
+                                    Calendar today = Calendar.getInstance();
+
+                                    cal.setTime(date);
+                                    cal.set(Calendar.HOUR, 8);
+                                    cal.set(Calendar.MINUTE, 0);
+                                    cal.set(Calendar.SECOND, 0);
+
+
+                                    if (cal.get(Calendar.YEAR) >= today.get(Calendar.YEAR)) {
+                                        if (cal.get(Calendar.YEAR) == today.get(Calendar.YEAR)) {
+                                            if (cal.get(Calendar.MONTH) >= today.get(Calendar.MONTH)) {
+                                                if (cal.get(Calendar.MONTH) == today.get(Calendar.MONTH)) {
+                                                    if (cal.get(Calendar.DAY_OF_MONTH) >= today.get(Calendar.DAY_OF_MONTH)) {
+                                                        setEvent(cal, petData.getId(), petData.getName(), count, id);
+                                                    }
+                                                } else {
+                                                    setEvent(cal, petData.getId(), petData.getName(), count, id);
+
+                                                }
+
+                                            }
+                                        } else {
+                                            if (cal.get(Calendar.YEAR) - today.get(Calendar.YEAR) <= 1) {
+                                                setEvent(cal, petData.getId(), petData.getName(), count, id);
+                                            }
+
+                                        }
+
+                                    }
+
+
+                                    //Long a = cal.getTimeInMillis();
+
+                                    //Log.e(petData.getId(),a.toString());
+
+
+                                    //events.add(new EventDay(cal, R.drawable.ic_notification));
+                                } catch (ParseException e) {
+                                    Log.e("", "");
+                                }
+
 
                             }
 
+
+
                         }
-                    } else {
-                        if (cal.get(Calendar.YEAR) - today.get(Calendar.YEAR) <= 1) {
-                            setEvent(cal, petData.getId(),petData.getName(),count,id);
-                        }
+
 
                     }
 
+
+
                 }
-
-
-                //Long a = cal.getTimeInMillis();
-
-                //Log.e(petData.getId(),a.toString());
-
-
-                //events.add(new EventDay(cal, R.drawable.ic_notification));
-            } catch (ParseException e) {
-                Log.e("", "");
             }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("", "");
+            }
+        });
 
-        }
 
     }
 
-    private void setEvent(Calendar targetCal, String petID,  String petName,Integer count,Integer id) {
+    private String getDataToString(DataSnapshot dataSnapshot,String child){
+        return dataSnapshot.child(child).getValue(String.class);
+    }
+
+    private Integer getDataToInteger(DataSnapshot dataSnapshot,String child){
+        return dataSnapshot.child(child).getValue(Integer.class);
+    }
+
+    private Boolean getDataToBoolean(DataSnapshot dataSnapshot,String child){
+        return dataSnapshot.child(child).getValue(Boolean.class);
+    }
+
+    private void setEvent(Calendar targetCal, String petID, String petName, Integer count, Integer id) {
         final Integer _id = (int) System.currentTimeMillis();
         Long s = targetCal.getTimeInMillis();
         Integer a = targetCal.get(Calendar.DAY_OF_MONTH);
@@ -201,20 +304,20 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         Integer c = targetCal.get(Calendar.YEAR);
 
         //Integer count = event.size();
-       // Log.e("ID",_id.toString());
+        // Log.e("ID",_id.toString());
         //Log.e("R",id.toString());
 
 
         //Log.e(petID + "/" + s, a + "/" + b + "/" + c);
         if (s >= 0) {
             Intent intent = new Intent(act.getBaseContext(), AlarmReceiver.class);
-            intent.putExtra("TITLE",  petName + " มีรายการที่ต้องทำ "+count+" รายการในวันนี้");
+            intent.putExtra("TITLE", petName + " มีรายการที่ต้องทำ " + count + " รายการในวันนี้");
             intent.putExtra("MESSAGE", "แตะเพื่อดูรายละเอียด");
             intent.putExtra("PETID", petID);
-            intent.putExtra("ID",_id);
+            intent.putExtra("ID", _id);
 
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(act.getBaseContext(),_id , intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(act.getBaseContext(), _id, intent, 0);
             //PendingIntent pendingIntent = PendingIntent.getActivity(act.getBaseContext(),_id , intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
             AlarmManager alarmManager = (AlarmManager) act.getSystemService(Context.ALARM_SERVICE);

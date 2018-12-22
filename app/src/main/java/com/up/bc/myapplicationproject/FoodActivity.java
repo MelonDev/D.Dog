@@ -11,8 +11,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.up.bc.myapplicationproject.Data.PackageData;
 import com.up.bc.myapplicationproject.Data.PetData;
+import com.up.bc.myapplicationproject.Data.PetEvent;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -72,19 +75,89 @@ public class FoodActivity extends AppCompatActivity {
 
                             }
 
-                            ArrayList<String> foodList = new CreateEvent().getFood(petData.getBreed());
-                            text.setText(foodList.get(getAgePosition(petData.getYear(), petData.getMonth(), petData.getDay())));
+                            FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid().toString()).child("Pets").child(key).child("Info").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot0) {
+                                    if (dataSnapshot0.getValue() != null) {
+                                        PetData petData = dataSnapshot0.getValue(PetData.class);
+
+                                        FirebaseDatabase.getInstance().getReference().child("Data").child("Food").child(petData.getBreed()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.getValue() != null) {
+
+                                                    PackageData packageData = dataSnapshot.getValue(PackageData.class);
+
+                                                    text.setText(getStringPosition(packageData,getAgePosition(petData.getYear(), petData.getMonth(), petData.getDay())));
+
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                Log.e("", "");
+                                            }
+                                        });
+
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.e("", "");
+                                }
+                            });
+
+
                         } else if (id == 1) {
                             Picasso.get().load(R.drawable.dog_toy).noFade().into(image);
 
-                            Boolean e = false;
-                            if (petData.getBreed().contentEquals("ลาบราดอร์รีทรีฟเวอร์") || petData.getBreed().contentEquals("โกลเด้น รีทรีฟเวอร์")) {
-                                e = true;
-                            } else {
-                                e = false;
-                            }
-                            ArrayList<String> toyList = new CreateEvent().getObject(e);
-                            text.setText(toyList.get(getAgePosition(petData.getYear(), petData.getMonth(), petData.getDay())));
+                            FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid().toString()).child("Pets").child(key).child("Info").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot0) {
+                                    if (dataSnapshot0.getValue() != null) {
+                                        PetData petData = dataSnapshot0.getValue(PetData.class);
+
+                                        FirebaseDatabase.getInstance().getReference().child("Data").child("Toy").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.getValue() != null) {
+
+                                                    if (petData.getBreed().contentEquals("ลาบราดอร์รีทรีฟเวอร์") || petData.getBreed().contentEquals("โกลเด้น รีทรีฟเวอร์")) {
+                                                        DataSnapshot d = dataSnapshot.child("Big");
+                                                        PackageData packageData = d.getValue(PackageData.class);
+
+                                                        text.setText(getStringPosition(packageData,getAgePosition(petData.getYear(), petData.getMonth(), petData.getDay())));
+
+                                                    }else {
+                                                        DataSnapshot d = dataSnapshot.child("Small");
+                                                        PackageData packageData = d.getValue(PackageData.class);
+
+                                                        text.setText(getStringPosition(packageData,getAgePosition(petData.getYear(), petData.getMonth(), petData.getDay())));
+
+                                                    }
+
+
+
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                Log.e("", "");
+                                            }
+                                        });
+
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.e("", "");
+                                }
+                            });
 
                         }
 
@@ -109,6 +182,109 @@ public class FoodActivity extends AppCompatActivity {
 
 
     }
+
+    private String getStringPosition(PackageData packageData, Integer position) {
+
+        switch (position) {
+            case 0:
+                return packageData.getFirst_session();
+            case 1:
+                return packageData.getSecond_session();
+            case 2:
+                return packageData.getThird_session();
+            case 3:
+                return packageData.getFourth_session();
+            case 4:
+                return packageData.getFifth_session();
+            case 5:
+                return packageData.getSixth_session();
+            default:
+                return "";
+
+        }
+
+    }
+
+    private void setFoodList() {
+        FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid().toString()).child("Pets").child(key).child("Info").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {
+                    PetData petData = dataSnapshot.getValue(PetData.class);
+
+
+                    //ArrayList<PetEvent> arr = new CreateEvent().load(petData.getBreed());
+
+                    FirebaseDatabase.getInstance().getReference().child("Data").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.getValue() != null) {
+
+                                Integer count2 = 0;
+
+                                ArrayList<PetEvent> arr = new ArrayList<>();
+                                arr.clear();
+
+                                DataSnapshot eventData = dataSnapshot.child("Event");
+
+                                for (DataSnapshot subDataSnapshot : eventData.getChildren()) {
+
+                                    count2 += 1;
+
+                                    DataSnapshot infoShot = subDataSnapshot.child("Info");
+                                    DataSnapshot dateShot = subDataSnapshot.child("Date");
+                                    DataSnapshot loopShot = subDataSnapshot.child("Loop");
+
+
+                                    PetEvent petEvent = new PetEvent();
+                                    petEvent.createEvent(getDataToString(infoShot, "name"), getDataToString(infoShot, "title"), getDataToBoolean(infoShot, "loop"))
+                                            .createDate(getDataToInteger(dateShot, "day"), getDataToInteger(dateShot, "month"), getDataToInteger(dateShot, "year"))
+                                            .createLoop(getDataToInteger(loopShot, "day"), getDataToInteger(loopShot, "month"), getDataToInteger(loopShot, "year"));
+
+
+                                    arr.add(petEvent);
+
+                                    if (count2 == eventData.getChildrenCount()) {
+
+
+                                    }
+
+
+                                }
+
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e("", "");
+                        }
+                    });
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("", "");
+            }
+        });
+    }
+
+    private String getDataToString(DataSnapshot dataSnapshot, String child) {
+        return dataSnapshot.child(child).getValue(String.class);
+    }
+
+    private Integer getDataToInteger(DataSnapshot dataSnapshot, String child) {
+        return dataSnapshot.child(child).getValue(Integer.class);
+    }
+
+    private Boolean getDataToBoolean(DataSnapshot dataSnapshot, String child) {
+        return dataSnapshot.child(child).getValue(Boolean.class);
+    }
+
 
     public Integer getAgePosition(Integer year, Integer month, Integer day) {
 

@@ -23,6 +23,7 @@ import com.riontech.calendar.utils.CalendarUtils;
 import com.up.bc.myapplicationproject.Data.PetData;
 import com.up.bc.myapplicationproject.Data.PetEvent;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -73,55 +74,109 @@ public class CalendarActivity extends AppCompatActivity {
                         PetData petData = dataSnapshot.getValue(PetData.class);
 
 
-                        ArrayList<PetEvent> arr = new CreateEvent().load(petData.getBreed());
-                        CalendarAlgorithmLibrary calendarAlgorithmLibrary = new CalendarAlgorithmLibrary();
-                        map = calendarAlgorithmLibrary.load(arr, petData.getYear(), petData.getMonth() -1, petData.getDay());
-                        ArrayList<String> arrDate = calendarAlgorithmLibrary.getStringFromMap(map);
+                        //ArrayList<PetEvent> arr = new CreateEvent().load(petData.getBreed());
+
+                        FirebaseDatabase.getInstance().getReference().child("Data").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.getValue() != null){
+
+                                    Integer count2 = 0;
+
+                                    ArrayList<PetEvent> arr = new ArrayList<>();
+                                    arr.clear();
+
+                                    DataSnapshot eventData = dataSnapshot.child("Event");
+
+                                    for (DataSnapshot subDataSnapshot : eventData.getChildren()) {
+
+                                        count2 += 1;
+
+                                        DataSnapshot infoShot = subDataSnapshot.child("Info");
+                                        DataSnapshot dateShot = subDataSnapshot.child("Date");
+                                        DataSnapshot loopShot = subDataSnapshot.child("Loop");
+
+
+                                        PetEvent petEvent = new PetEvent();
+                                        petEvent.createEvent(getDataToString(infoShot,"name"),getDataToString(infoShot,"title"),getDataToBoolean(infoShot,"loop"))
+                                                .createDate(getDataToInteger(dateShot,"day"),getDataToInteger(dateShot,"month"),getDataToInteger(dateShot,"year"))
+                                                .createLoop(getDataToInteger(loopShot,"day"),getDataToInteger(loopShot,"month"),getDataToInteger(loopShot,"year"));
+
+
+                                        arr.add(petEvent);
+
+                                        if(count2 == eventData.getChildrenCount()){
+
+
+                                            CalendarAlgorithmLibrary calendarAlgorithmLibrary = new CalendarAlgorithmLibrary();
+                                            map = calendarAlgorithmLibrary.load(arr, petData.getYear(), petData.getMonth() -1, petData.getDay());
+                                            ArrayList<String> arrDate = calendarAlgorithmLibrary.getStringFromMap(map);
 
 
 
-                        List<EventDay> events = new ArrayList<>();
+                                            List<EventDay> events = new ArrayList<>();
 
 
-                        for (int i = 0; i < arrDate.size(); i++) {
+                                            for (int i = 0; i < arrDate.size(); i++) {
 
-                            String strDate = arrDate.get(i);
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            try {
-                                Date date = sdf.parse(strDate);
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(date);
+                                                String strDate = arrDate.get(i);
+                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                                try {
+                                                    Date date = sdf.parse(strDate);
+                                                    Calendar cal = Calendar.getInstance();
+                                                    cal.setTime(date);
 
-                                events.add(new EventDay(cal, R.drawable.ic_notification));
-                            } catch (ParseException e) {
+                                                    events.add(new EventDay(cal, R.drawable.ic_notification));
+                                                } catch (ParseException e) {
+                                                    Log.e("", "");
+                                                }
+
+
+                                            }
+
+
+                                            showCal(Calendar.getInstance());
+
+
+                                            com.applandeo.materialcalendarview.CalendarView calendarViews = (com.applandeo.materialcalendarview.CalendarView) findViewById(R.id.calendarView);
+                                            calendarViews.setEvents(events);
+                                            calendarViews.setOnDayClickListener(eventDay -> {
+                                                Calendar clickedDayCalendar = eventDay.getCalendar();
+
+                                                showCal(clickedDayCalendar);
+
+
+                                            });
+
+
+                                            LinearLayout backBtn = (LinearLayout) findViewById(R.id.calendar_back_btn);
+                                            backBtn.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    finish();
+                                                }
+                                            });
+
+
+
+                                        }
+
+
+                                    }
+
+
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
                                 Log.e("", "");
                             }
-
-
-                        }
-
-
-                        showCal(Calendar.getInstance());
-
-
-                        com.applandeo.materialcalendarview.CalendarView calendarViews = (com.applandeo.materialcalendarview.CalendarView) findViewById(R.id.calendarView);
-                        calendarViews.setEvents(events);
-                        calendarViews.setOnDayClickListener(eventDay -> {
-                            Calendar clickedDayCalendar = eventDay.getCalendar();
-
-                            showCal(clickedDayCalendar);
-
-
                         });
 
 
-                        LinearLayout backBtn = (LinearLayout) findViewById(R.id.calendar_back_btn);
-                        backBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                finish();
-                            }
-                        });
+
 
                     }
                 }
@@ -215,6 +270,19 @@ public class CalendarActivity extends AppCompatActivity {
 
         }
     }
+
+    private String getDataToString(DataSnapshot dataSnapshot,String child){
+        return dataSnapshot.child(child).getValue(String.class);
+    }
+
+    private Integer getDataToInteger(DataSnapshot dataSnapshot,String child){
+        return dataSnapshot.child(child).getValue(Integer.class);
+    }
+
+    private Boolean getDataToBoolean(DataSnapshot dataSnapshot,String child){
+        return dataSnapshot.child(child).getValue(Boolean.class);
+    }
+
 
 
 }

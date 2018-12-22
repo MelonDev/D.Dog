@@ -1,16 +1,24 @@
 package com.up.bc.myapplicationproject;
 
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.up.bc.myapplicationproject.Data.PetEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+
 public class CreateEvent {
 
     private ArrayList<PetEvent> aData() {
         ArrayList<PetEvent> events = new ArrayList<>();
-
+/*
         events.add(new PetEvent().createEvent("ลูกสุนัขอายุได้ 1 เดือน", "กำจัดพยาธิ", false).createDate(0, 1, 0).createLoop(0, 0, 0));
         events.add(new PetEvent().createEvent("ต่อมา 2 สัปดาห์ต่อครั้ง(หากถ่ายรอบแรกแล้วมีเยอะ)", "กำจัดพยาธิ", true).createDate(14, 1, 0).createLoop(14, 0, 0));
         events.add(new PetEvent().createEvent("ต่อมาทุกๆ2-3เดือนต่อครั้ง", "กำจัดพยาธิ", true).createDate(14, 1, 0).createLoop(0, 2, 0));
@@ -25,7 +33,7 @@ public class CreateEvent {
         events.add(new PetEvent().createEvent("วัคซีนรวม 5 โรค ป้องกันโรคลำไส้อักเสบติดต่อ,โรคไข้หัดสุนัข,โรคตับอักเสบติดต่อ,โรคหวัดและหลอดลมอักเสบติดต่อและโรคเลปโคสไปโรซีล", "ฉีดวัคซีน", false).createDate(56, 0, 0).createLoop(0, 0, 0));
         events.add(new PetEvent().createEvent("วัคซีนรวม 6 โรค ป้องกันลำไส้อักเสบติดต่อ, โรคไข้หัดสุนัข, โรคตับอักเสบติดต่อ, โรคหวัดและหลอดลมอักเสบติดต่อ, โรคเลปโตสไปโรซีส และโรคพิษสุนัขบ้า", "ฉีดวัคซีน", false).createDate(84, 0, 0).createLoop(0, 0, 0));
         events.add(new PetEvent().createEvent("วัคซีนรวม 6 โรค ป้องกันลำไส้อักเสบติดต่อ, โรคไข้หัดสุนัข, โรคตับอักเสบติดต่อ, โรคหวัดและหลอดลมอักเสบติดต่อ, โรคเลปโตสไปโรซีส และโรคพิษสุนัขบ้า", "ฉีดวัคซีน", true).createDate(0, 0, 1).createLoop(0, 0, 1));
-
+*/
         return events;
     }
 
@@ -37,11 +45,18 @@ public class CreateEvent {
         }
     }
 
-    public ArrayList<PetEvent> load(String breed) {
+    private PetEvent getPetEvent(){
+
+        return new PetEvent();
+
+    }
+
+    public ArrayList<PetEvent> loada(String breed) {
 
         ArrayList<PetEvent> events = new ArrayList<>();
-        events = aData();
-        events.add(bData(breed));
+        //events = aData();
+        //events.add(bData(breed));
+
 
 
         return events;
@@ -51,7 +66,7 @@ public class CreateEvent {
     public HashMap<String, ArrayList<String>> getMapFood() {
 
         HashMap<String, ArrayList<String>> map = new HashMap<>();
-
+/*
         ArrayList<String> a1 = new ArrayList<>();
         a1.add("นมแม่ หรือ นมแพะ");
         a1.add("นมแพะ หรือ อาหารเปียก อาหารเม็ดพวกสูตร junior ควรนำมาแช่น้ำอุ่น หรือ แช่นม เพื่อให้อาหารนุ่มขึ้น เพราะเป็นวัยที่ลูกสุนัขฟันกำลังขึ้นเป็นการช่วยให้เปลี่ยนจากกินนมแม่ เพื่อให้ลูกสุนัขกินอาหารเม็ดเป็น");
@@ -141,35 +156,13 @@ public class CreateEvent {
         a10.add("สุนัขพันธุ์ลาบราดอร์รีทรีฟเวอร์ เป็นสุนัขที่ชอบวิ่ง นักล่า สูตรอาหารที่แนะนำเหมาะสมวัยนี้ พวกแคลเซียมสูง Joint Mobilityเสริมกระดูกข้อให้แก่สุนัขพันธุ์โต โปรตีน DHA โอเมก้า3 เลซิทิน โคลีน ช่วยพัฒนาความจำที่ดีและเสริมพัฒนาการทางสมองและสร้างความแข็งแรงให้หัวใจ วิตามินอีและซีลิเนียมสร้างความแข็งแรงให้หัวใจ  ย่อยง่าย ช่วยเพิ่มประสิทธิภาพของระบบย่อยอาหารและการขับถ่าย");
         a10.add("แม่สุนัขที่กำลังตั้งครรภ์อาหารที่แนะนำสามารถกินอาหารเม็ดได้ตามปกติ อาจเสริมพวก แคลเซียม ไขมัน วิตามินสูง โปรตีนเนื้อสัตว์ลงไป ไข่ไก่ผสม เพราะแม่สุนัขต้องเสริมสร้างน้ำนมให้แก่ลูกสุนัข  ในช่วงใกล้คลอดอาจให้เสริมอาหารที่มีกากใยอาหารมากขึ้น");
         map.put("ลาบราดอร์รีทรีฟเวอร์", a10);
-
+*/
 
         return map;
     }
 
 
-    public ArrayList<String> getObject(Boolean isBig) {
-        ArrayList<String> a1 = new ArrayList<>();
-        a1.add("ลูกบอลพลาสติก");
-        a1.add("ลูกบอลพลาสติก,เชือก");
-        a1.add("ลูกบอลพลาสติก,เชือก,ตุ๊กตาพลาสิก,ขนมขัดฟัน");
-        a1.add("ลูกบอลพลาสติก,เชือก,ตุ๊กตาพลาสิก,ขนมขัดฟัน");
-        a1.add("ลูกบอลพลาสติก,ขนมขัดฟัน");
-        a1.add("ลูกบอลพลาสติก *ไม่ควรเล่นอะไรแรง");
 
-        ArrayList<String> a2 = new ArrayList<>();
-        a2.add("ลูกบอลพลาสติก,ตุ๊กตาพลาสติก,เชือกถัด");
-        a2.add("ลูกบอลพลาสติก,ตุ๊กตาพลาสติก,เชือกถัด");
-        a2.add("ลูกบอลพลาสติก,ตุ๊กตาพลาสติก,เชือกถัด,ขนมขัดฟัน");
-        a2.add("ลูกบอลพลาสติก,ตุ๊กตาพลาสติก,เชือกถัด,กระดูกเทียม");
-        a2.add("ลูกบอลพลาสติก,ตุ๊กตาพลาสติก,เชือกถัด");
-        a2.add("ลูกบอลพลาสติก,ตุ๊กตาพลาสติก,เชือกถัด  *ไม่ควรเล่นอะไรแรง");
-
-        if (isBig) {
-            return a2;
-        } else {
-            return a1;
-        }
-    }
 
     public ArrayList<String> getFood(String name) {
 
