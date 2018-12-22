@@ -213,7 +213,6 @@ public class FoodActivity extends AppCompatActivity {
                     PetData petData = dataSnapshot.getValue(PetData.class);
 
 
-                    //ArrayList<PetEvent> arr = new CreateEvent().load(petData.getBreed());
 
                     FirebaseDatabase.getInstance().getReference().child("Data").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override

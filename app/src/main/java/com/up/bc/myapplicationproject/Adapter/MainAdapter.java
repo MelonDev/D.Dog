@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.applandeo.materialcalendarview.EventDay;
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,7 +18,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.up.bc.myapplicationproject.AlarmReceiver;
 import com.up.bc.myapplicationproject.CalendarAlgorithmLibrary;
-import com.up.bc.myapplicationproject.CreateEvent;
 import com.up.bc.myapplicationproject.Data.PetData;
 import com.up.bc.myapplicationproject.Data.PetEvent;
 import com.up.bc.myapplicationproject.FunctionTool;
@@ -33,15 +31,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Constraints;
-import androidx.work.OneTimeWorkRequest;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
@@ -133,7 +127,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private void calEvent(Integer position, PetData petData) {
 
-        //ArrayList<PetEvent> arr = new CreateEvent().load(petData.getBreed());
 
         FirebaseDatabase.getInstance().getReference().child("Data").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
