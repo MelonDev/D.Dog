@@ -106,6 +106,35 @@ public class CalendarActivity extends AppCompatActivity {
 
                                         if(count2 == eventData.getChildrenCount()){
 
+                                            DataSnapshot eventDataS = dataSnapshot.child("Special_Event");
+
+
+                                            if(petData.getBreed().contentEquals("ลาบราดอร์รีทรีฟเวอร์")){
+                                                DataSnapshot eventDataSS = eventDataS.child("ลาบราดอร์รีทรีฟเวอร์");
+                                                DataSnapshot infoShotS = eventDataSS.child("Info");
+                                                DataSnapshot dateShotS = eventDataSS.child("Date");
+                                                DataSnapshot loopShotS = eventDataSS.child("Loop");
+
+                                                PetEvent petEventS = new PetEvent();
+                                                petEventS.createEvent(getDataToString(infoShotS,"name"),getDataToString(infoShotS,"title"),getDataToBoolean(infoShotS,"loop"))
+                                                        .createDate(getDataToInteger(dateShotS,"day"),getDataToInteger(dateShotS,"month"),getDataToInteger(dateShotS,"year"))
+                                                        .createLoop(getDataToInteger(loopShotS,"day"),getDataToInteger(loopShotS,"month"),getDataToInteger(loopShotS,"year"));
+
+                                                arr.add(petEventS);
+                                            }else {
+                                                DataSnapshot eventDataSS = eventDataS.child("อื่น");
+                                                DataSnapshot infoShotS = eventDataSS.child("Info");
+                                                DataSnapshot dateShotS = eventDataSS.child("Date");
+                                                DataSnapshot loopShotS = eventDataSS.child("Loop");
+
+                                                PetEvent petEventS = new PetEvent();
+                                                petEventS.createEvent(getDataToString(infoShotS,"name"),getDataToString(infoShotS,"title"),getDataToBoolean(infoShotS,"loop"))
+                                                        .createDate(getDataToInteger(dateShotS,"day"),getDataToInteger(dateShotS,"month"),getDataToInteger(dateShotS,"year"))
+                                                        .createLoop(getDataToInteger(loopShotS,"day"),getDataToInteger(loopShotS,"month"),getDataToInteger(loopShotS,"year"));
+
+                                                arr.add(petEventS);
+                                            }
+
 
                                             CalendarAlgorithmLibrary calendarAlgorithmLibrary = new CalendarAlgorithmLibrary();
                                             map = calendarAlgorithmLibrary.load(arr, petData.getYear(), petData.getMonth() -1, petData.getDay());

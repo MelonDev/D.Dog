@@ -437,7 +437,7 @@ public class AddActivity extends AppCompatActivity {
                             if(!knowAge){
                                 Calendar cs = Calendar.getInstance();
 
-                                cs.add(Calendar.YEAR,1);
+                                cs.add(Calendar.YEAR,-1);
 
                                 Integer yearsm = cs.get(Calendar.YEAR);
                                 Integer monthsm = cs.get(Calendar.MONTH);
@@ -506,7 +506,7 @@ public class AddActivity extends AppCompatActivity {
             if(!knowAge){
                 Calendar cs = Calendar.getInstance();
 
-                cs.add(Calendar.YEAR,1);
+                cs.add(Calendar.YEAR,-1);
 
                 Integer yearsm = cs.get(Calendar.YEAR);
                 Integer monthsm = cs.get(Calendar.MONTH);
