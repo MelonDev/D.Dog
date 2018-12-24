@@ -124,17 +124,30 @@ public class FoodActivity extends AppCompatActivity {
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                 if (dataSnapshot.getValue() != null) {
 
-                                                    if (petData.getBreed().contentEquals("ลาบราดอร์รีทรีฟเวอร์") || petData.getBreed().contentEquals("โกลเด้น รีทรีฟเวอร์")) {
-                                                        DataSnapshot d = dataSnapshot.child("Big");
-                                                        PackageData packageData = d.getValue(PackageData.class);
+                                                    Integer count = 0;
+                                                    Boolean pass = false;
 
-                                                        text.setText(getStringPosition(packageData,getAgePosition(petData.getYear(), petData.getMonth(), petData.getDay())));
+                                                    for (DataSnapshot toySnap : dataSnapshot.getChildren()) {
+                                                        count+=1;
 
-                                                    }else {
-                                                        DataSnapshot d = dataSnapshot.child("Small");
-                                                        PackageData packageData = d.getValue(PackageData.class);
+                                                        if(!pass){
 
-                                                        text.setText(getStringPosition(packageData,getAgePosition(petData.getYear(), petData.getMonth(), petData.getDay())));
+                                                            if(toySnap.getKey().contentEquals(petData.getBreed())){
+                                                                DataSnapshot d = dataSnapshot.child(petData.getBreed());
+                                                                PackageData packageData = d.getValue(PackageData.class);
+
+                                                                text.setText(getStringPosition(packageData,getAgePosition(petData.getYear(), petData.getMonth(), petData.getDay())));
+
+                                                                pass = true;
+                                                            }else {
+                                                                if(count == dataSnapshot.getChildrenCount()){
+                                                                    DataSnapshot d = dataSnapshot.child("อื่น");
+                                                                    PackageData packageData = d.getValue(PackageData.class);
+
+                                                                    text.setText(getStringPosition(packageData,getAgePosition(petData.getYear(), petData.getMonth(), petData.getDay())));
+                                                                }
+                                                            }
+                                                        }
 
                                                     }
 
